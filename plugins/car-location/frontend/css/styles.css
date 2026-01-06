@@ -70,10 +70,10 @@
    ======================================== */
 .clp-card {
     background: white;
-    border-radius: 20px;
+    border-radius: 16px;
     padding: 20px;
     margin-bottom: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .clp-card-title {
@@ -86,86 +86,120 @@
 }
 
 /* ========================================
-   Button Components
+   Note Container (Ana Projeden)
    ======================================== */
-.clp-btn {
+.clp-note-container {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+    margin-bottom: 12px;
+}
+
+.clp-note-textarea {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1px solid var(--clp-border);
+    background: #ffffff;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--clp-text-primary);
+    outline: none;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    resize: none;
+    min-height: 64px;
+    height: 64px;
+    line-height: 1.4;
+}
+
+.clp-note-textarea:focus {
+    border-color: var(--clp-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.clp-note-textarea::placeholder {
+    color: #8e8e93;
+}
+
+/* ========================================
+   Camera Button (Ana Projeden)
+   ======================================== */
+.clp-camera-btn {
+    width: 64px;
+    min-width: 64px;
+    height: 64px;
+    border: 1px solid var(--clp-border);
+    background: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--clp-text-secondary);
+    padding: 0;
+}
+
+.clp-camera-btn:active {
+    transform: scale(0.98);
+}
+
+.clp-camera-btn.has-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.clp-camera-btn.has-photo svg {
+    display: none;
+}
+
+.clp-camera-btn.has-photo::after {
+    content: '✕';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* ========================================
+   Save Button (Ana Projeden)
+   ======================================== */
+.clp-btn-save {
     width: 100%;
-    padding: 16px 24px;
+    padding: 10px;
     border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 700;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    letter-spacing: -0.2px;
 }
 
-.clp-btn:active {
+.clp-btn-save svg {
+    width: 16px;
+    height: 16px;
+}
+
+.clp-btn-save:active {
     transform: scale(0.98);
-}
-
-.clp-btn-primary {
-    background: linear-gradient(135deg, var(--clp-primary) 0%, var(--clp-primary-dark) 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-}
-
-.clp-btn-primary:hover {
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
-    transform: translateY(-2px);
-}
-
-.clp-btn-success {
-    background: linear-gradient(135deg, var(--clp-secondary) 0%, var(--clp-secondary-dark) 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
-}
-
-.clp-btn-success:hover {
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-    transform: translateY(-2px);
-}
-
-.clp-btn-danger {
-    background: linear-gradient(135deg, var(--clp-danger) 0%, #dc2626 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
-}
-
-/* ========================================
-   Input Components
-   ======================================== */
-.clp-input,
-.clp-textarea {
-    width: 100%;
-    padding: 14px 16px;
-    border: 2px solid var(--clp-border);
-    border-radius: 12px;
-    font-size: 15px;
-    font-family: inherit;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    background: white;
-    color: var(--clp-text-primary);
-}
-
-.clp-input:focus,
-.clp-textarea:focus {
-    outline: none;
-    border-color: var(--clp-primary);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.clp-textarea {
-    resize: none;
-    min-height: 80px;
-}
-
-.clp-input::placeholder,
-.clp-textarea::placeholder {
-    color: #94a3b8;
 }
 
 /* ========================================
@@ -456,26 +490,25 @@
    Picker Component (iOS Style)
    ======================================== */
 .clp-picker-pane {
-    background: white;
-    border-radius: 16px;
+    background: var(--clp-bg);
+    border-radius: 12px;
     width: 100%;
-    padding: 20px;
+    padding: 14px 16px;
     position: relative;
     z-index: 1;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .clp-picker-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--clp-border);
 }
 
 .clp-picker-result {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     color: var(--clp-text-primary);
     transition: color 0.3s ease;
@@ -510,8 +543,8 @@
     overflow: hidden;
     mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
     -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
-    background: var(--clp-bg);
-    border-radius: 12px;
+    background: white;
+    border-radius: 10px;
 }
 
 .clp-highlight-bar {
@@ -520,7 +553,7 @@
     left: 0;
     width: 100%;
     height: var(--clp-item-height);
-    background-color: rgba(37, 99, 235, 0.08);
+    background-color: rgba(0, 0, 0, 0.05);
     transform: translateY(-50%);
     border-radius: 8px;
     pointer-events: none;
@@ -597,93 +630,6 @@
 .clp-notification.success { background: var(--clp-secondary); color: white; }
 .clp-notification.error { background: var(--clp-danger); color: white; }
 .clp-notification.info { background: var(--clp-primary); color: white; }
-
-/* ========================================
-   Tour/Spotlight Component
-   ======================================== */
-.clp-spotlight {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200vmax;
-    height: 200vmax;
-    border-radius: 50%;
-    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0);
-    pointer-events: none;
-    z-index: 9998;
-    transition: 
-        box-shadow 0.8s ease,
-        width 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-        height 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-        top 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-        left 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.clp-spotlight.focus {
-    box-shadow: 0 0 0 5000px rgba(0, 0, 0, 0.75);
-}
-
-.clp-tour-bubble {
-    position: fixed;
-    background: white;
-    padding: 16px 18px;
-    border-radius: 14px;
-    width: 220px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    z-index: 10000;
-    opacity: 0;
-    transform: translateX(10px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-    pointer-events: none;
-}
-
-.clp-tour-bubble.visible {
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
-}
-
-.clp-tour-bubble h3 {
-    margin: 0 0 8px 0;
-    font-size: 15px;
-    font-weight: 700;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.clp-tour-bubble p {
-    margin: 0 0 14px 0;
-    font-size: 13px;
-    color: #64748b;
-    line-height: 1.5;
-}
-
-.clp-tour-bubble .btn-close {
-    background: linear-gradient(135deg, var(--clp-primary) 0%, var(--clp-primary-dark) 100%);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    width: 100%;
-    transition: all 0.2s ease;
-}
-
-.clp-tour-bubble::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -8px;
-    transform: translateY(-50%);
-    border-top: 10px solid transparent;
-    border-bottom: 10px solid transparent;
-    border-left: 10px solid white;
-}
 
 /* ========================================
    Photo Modal Component
@@ -777,7 +723,7 @@
     
     .clp-card {
         padding: 16px;
-        border-radius: 16px;
+        border-radius: 14px;
     }
     
     .clp-expand-btn {
@@ -805,8 +751,14 @@
         height: 36px;
     }
     
-    .clp-btn {
-        padding: 14px 20px;
-        font-size: 15px;
+    .clp-note-textarea,
+    .clp-camera-btn {
+        min-height: 56px;
+        height: 56px;
+    }
+    
+    .clp-camera-btn {
+        width: 56px;
+        min-width: 56px;
     }
 }
