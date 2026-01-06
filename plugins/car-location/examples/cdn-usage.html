@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Location Plugin - CDN Usage</title>
+    
+    <!-- 
+        CDN'den yüklemek için GitHub Pages veya jsDelivr kullanın:
+        
+        GitHub raw (test için):
+        https://raw.githubusercontent.com/USERNAME/REPO/main/plugins/car-location/frontend/css/styles.css
+        
+        jsDelivr (production için):
+        https://cdn.jsdelivr.net/gh/USERNAME/REPO@main/plugins/car-location/frontend/css/styles.css
+    -->
+    
+    <!-- Local development için -->
+    <link rel="stylesheet" href="../frontend/css/styles.css">
+    
+    <style>
+        /* Opsiyonel: Custom tema override */
+        :root {
+            /* Primary rengi değiştir */
+            /* --clp-primary: #8b5cf6; */
+            /* --clp-primary-dark: #7c3aed; */
+        }
+    </style>
+</head>
+<body class="clp-page">
+    
+    <h1 style="text-align: center; margin-bottom: 20px; font-family: system-ui;">🚗 Aracım Nerede?</h1>
+    
+    <!-- Plugin Container -->
+    <div id="app" class="clp-container"></div>
+
+    <!-- Scripts -->
+    <script src="../backend/js/core.js"></script>
+    <script src="../frontend/js/ui.js"></script>
+    <script src="../plugin.js"></script>
+    
+    <script>
+        (async function() {
+            // Plugin'i başlat
+            const plugin = new CarLocationPlugin({
+                containerId: 'app',
+                dataPath: '../backend/data/parking-spots.json',
+                
+                // Opsiyonel ayarlar
+                dbName: 'MyAppCarLocationDB',  // Özel veritabanı adı
+                channelName: 'my_app_clp'       // Özel broadcast kanal adı
+            });
+
+            await plugin.init();
+            
+            // API Örnekleri:
+            
+            // 1. Navigate callback
+            plugin.setNavigateCallback((parking, index) => {
+                alert(`Navigasyon: ${parking.floor} - ${parking.parkingSpot}`);
+            });
+            
+            // 2. Programatik seçim
+            // plugin.setSelection('B2', 'C', '03');
+            
+            // 3. Mevcut seçimi al
+            // const selection = plugin.getSelection();
+            // console.log(selection);
+            
+            // 4. Tüm kayıtları al
+            // const parkings = plugin.getParkings();
+            // console.log(parkings);
+            
+            // 5. Manuel kayıt ekle
+            // await plugin.addParking({ note: 'Test kayıt' });
+            
+            // 6. Veri değişikliği callback
+            plugin.onDataChange = (parkings) => {
+                console.log('Veri güncellendi:', parkings.length, 'kayıt');
+            };
+            
+            console.log('✅ Plugin hazır!');
+        })();
+    </script>
+</body>
+</html>
+
