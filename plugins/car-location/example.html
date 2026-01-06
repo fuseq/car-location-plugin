@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Location Plugin - Demo</title>
+    
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="frontend/css/styles.css">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+            background: #f1f5f9;
+            min-height: 100vh;
+        }
+        
+        .demo-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .demo-header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .demo-header h1 {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .demo-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .demo-section h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .picker-result {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: #f8fafc;
+            transition: color 0.3s;
+        }
+        
+        .picker-labels {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #8e8e93;
+            text-transform: uppercase;
+        }
+        
+        .picker-labels span { flex: 1; text-align: center; }
+        
+        .picker-wrapper {
+            display: flex;
+            position: relative;
+            height: 108px;
+            overflow: hidden;
+            mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 75%, transparent 100%);
+        }
+        
+        .picker-highlight {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 36px;
+            background: rgba(0,0,0,0.05);
+            transform: translateY(-50%);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        
+        .picker-column {
+            flex: 1;
+            height: 100%;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+        }
+        
+        .picker-column::-webkit-scrollbar { display: none; }
+        
+        .picker-column-content { padding: 36px 0; }
+        
+        .btn-save {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-save:active { transform: scale(0.98); }
+        
+        .note-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            resize: none;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+        
+        .note-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+        
+        .parking-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+        }
+        
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            color: white;
+            padding: 10px;
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>🚗 Aracım Nerede?</h1>
+            <p>Park yeri seçin ve kaydedin</p>
+        </div>
+        
+        <!-- Picker Section -->
+        <div class="demo-section">
+            <h3>Park Yeri Seç</h3>
+            
+            <div class="picker-result" id="pickerResult">Yükleniyor...</div>
+            
+            <div class="picker-labels">
+                <span>Kat</span>
+                <span>Blok</span>
+                <span>No</span>
+            </div>
+            
+            <div class="picker-wrapper">
+                <div class="picker-highlight"></div>
+                <div class="picker-column clp-column" id="col-floor">
+                    <div class="picker-column-content clp-column-content" id="content-floor"></div>
+                </div>
+                <div class="picker-column clp-column" id="col-column">
+                    <div class="picker-column-content clp-column-content" id="content-column"></div>
+                </div>
+                <div class="picker-column clp-column" id="col-number">
+                    <div class="picker-column-content clp-column-content" id="content-number"></div>
+                </div>
+            </div>
+            
+            <textarea class="note-input" id="noteInput" placeholder="Not ekle (opsiyonel)" rows="2"></textarea>
+            
+            <button class="btn-save" id="saveBtn">💾 Kaydet</button>
+        </div>
+        
+        <!-- Saved Parkings -->
+        <div class="demo-section">
+            <h3>Kayıtlı Araçlar</h3>
+            <div class="parking-list" id="parkingList">
+                <div class="empty-state">Henüz kayıt yok</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-bar" id="statusBar">Plugin yükleniyor...</div>
+
+    <!-- Plugin -->
+    <script src="backend/js/core.js"></script>
+    <script src="frontend/js/ui.js"></script>
+    <script src="plugin.js"></script>
+    
+    <script>
+        let plugin;
+        let picker;
+        
+        async function initDemo() {
+            // Plugin başlat
+            plugin = new CarLocationPlugin({
+                dataPath: 'backend/data/parking-spots.json'
+            });
+            
+            const success = await plugin.init();
+            
+            if (!success) {
+                document.getElementById('statusBar').textContent = '❌ Plugin yüklenemedi!';
+                return;
+            }
+            
+            // Picker başlat
+            picker = new CLPPicker({
+                onValueChange: handlePickerChange
+            });
+            
+            picker.init('demo', [
+                { 
+                    id: 'floor', 
+                    elementId: 'col-floor', 
+                    contentId: 'content-floor', 
+                    data: plugin.getFloorsForPicker(),
+                    defaultValue: plugin.selectedFloor
+                },
+                { 
+                    id: 'column', 
+                    elementId: 'col-column', 
+                    contentId: 'content-column', 
+                    data: plugin.getColumnsForPicker()
+                },
+                { 
+                    id: 'number', 
+                    elementId: 'col-number', 
+                    contentId: 'content-number', 
+                    data: plugin.getNumbersForPicker()
+                }
+            ]);
+            
+            // UI güncelle
+            updatePickerResult();
+            renderParkingList();
+            
+            // Data change callback
+            plugin.onDataChange = (type, data) => {
+                console.log('Data changed:', type, data);
+                renderParkingList();
+                document.getElementById('statusBar').textContent = `🔄 Senkronize edildi (${type})`;
+                setTimeout(() => updateStatus(), 2000);
+            };
+            
+            // Save button
+            document.getElementById('saveBtn').addEventListener('click', saveParking);
+            
+            updateStatus();
+        }
+        
+        function handlePickerChange(columnId, value, allValues) {
+            const result = plugin.handlePickerChange(columnId, value);
+            
+            // Picker'ı güncelle
+            if (columnId === 'floor') {
+                picker.updateColumnData('column', plugin.getColumnsForPicker());
+                setTimeout(() => {
+                    picker.updateColumnData('number', plugin.getNumbersForPicker());
+                }, 60);
+            } else if (columnId === 'column') {
+                picker.updateColumnData('number', plugin.getNumbersForPicker());
+            }
+            
+            updatePickerResult();
+        }
+        
+        function updatePickerResult() {
+            const values = plugin.getSelectedValues();
+            const resultEl = document.getElementById('pickerResult');
+            resultEl.textContent = `${values.floor} - ${values.spotCode}` + 
+                (values.color ? ` (${values.color.name})` : '');
+            resultEl.style.color = values.color?.hex || '#000';
+        }
+        
+        async function saveParking() {
+            const note = document.getElementById('noteInput').value.trim();
+            
+            const result = await plugin.addParking({ note });
+            
+            CLPUIComponents.showNotification(
+                `✅ ${result.data.floor} - ${result.data.parkingSpot} kaydedildi!`, 
+                'success'
+            );
+            
+            document.getElementById('noteInput').value = '';
+            renderParkingList();
+        }
+        
+        function renderParkingList() {
+            const list = document.getElementById('parkingList');
+            const parkings = plugin.getParkings();
+            
+            if (parkings.length === 0) {
+                list.innerHTML = '<div class="empty-state">Henüz kayıt yok</div>';
+                return;
+            }
+            
+            list.innerHTML = parkings.map((p, i) => 
+                CLPUIComponents.createCarCard(p, i)
+            ).join('');
+            
+            // Delete buttons
+            list.querySelectorAll('.clp-btn-circular.delete').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const index = parseInt(e.currentTarget.dataset.index);
+                    const parking = parkings[index];
+                    
+                    if (confirm('Bu kaydı silmek istiyor musunuz?')) {
+                        await plugin.deleteParking(parking.id);
+                        CLPUIComponents.showNotification('Kayıt silindi', 'info');
+                        renderParkingList();
+                    }
+                });
+            });
+            
+            // Share buttons
+            list.querySelectorAll('.clp-btn-circular.share').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const index = parseInt(e.currentTarget.dataset.index);
+                    const parking = parkings[index];
+                    const text = `🚗 ${parking.floor} - ${parking.parkingSpot}`;
+                    
+                    if (navigator.share) {
+                        await navigator.share({ title: 'Park Yeri', text });
+                    } else {
+                        await navigator.clipboard.writeText(text);
+                        CLPUIComponents.showNotification('Kopyalandı!', 'success');
+                    }
+                });
+            });
+            
+            // Photo click
+            list.querySelectorAll('.clp-car-icon.has-photo').forEach(icon => {
+                icon.addEventListener('click', () => {
+                    CLPUIComponents.openPhotoModal(icon.dataset.photo);
+                });
+            });
+        }
+        
+        function updateStatus() {
+            const count = plugin.getParkings().length;
+            document.getElementById('statusBar').textContent = 
+                `✓ Plugin aktif | ${plugin.getDataService().getSpotCount()} park yeri | ${count} kayıt`;
+        }
+        
+        // Başlat
+        initDemo();
+    </script>
+</body>
+</html>
